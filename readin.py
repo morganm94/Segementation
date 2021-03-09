@@ -5,6 +5,7 @@ import os
 from torch.utils.data import DataLoader,Dataset,random_split
 import numpy as np
 from augmentation import augmentatonTransforms
+
 def make_dir(path):
     patients = [file for file in os.listdir(path) if file not in ['data.csv', 'README.md']]
     mask, image = [], []  # to store the paths to mask and image
@@ -33,6 +34,9 @@ class Brain_dataset(Dataset):
         #         else:
         #             self.image.append(os.path.join(self.path,patient,file))
 
+
+
+
     def __len__(self):
         return len(self.image)
 
@@ -41,6 +45,7 @@ class Brain_dataset(Dataset):
         mask_path=self.mask[idx]
         image=Image.open(image_path)
         mask=Image.open(mask_path)
+
         if self.transform :
             image,mask=self.transform((image,mask))
         mask=transforms.ToTensor()(mask)

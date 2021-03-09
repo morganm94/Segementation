@@ -17,6 +17,7 @@ NUM_WORKERS=4
 path='.\dataset\kaggle_3m'
 filter=[32,64,128,256,512]
 Learning_rate=1e-3
+
 best=0
 image_path,mask_path=make_dir(path)
 train_path,test_path,train_mask_path,test_mask_path = train_test_split(image_path,mask_path,test_size=0.2,random_state=5)
@@ -26,6 +27,7 @@ test_set=Brain_dataset(image_path_list=test_path,mask_path_list=test_mask_path)
 # train_number=int(data.__len__()*PERCENTAGE)
 # test_number=data.__len__()-train_number
 # train_set,test_set=random_split(data,[train_number,test_number])
+
 train_loader=DataLoader(dataset=train_set,batch_size=BATCHSIZE,shuffle=True,num_workers=NUM_WORKERS)
 test_loader=DataLoader(dataset=test_set,batch_size=BATCHSIZE)
 
@@ -41,6 +43,7 @@ for epoch in range(EPOCH):
     print('EPOCH:{}/{}'.format(epoch+1,EPOCH))
     history_loss={'train':[],'test':[]}
     history_dsc={'train':[],'test':[]}
+
     history_iou = {'train': [], 'test': []}
 
     for phase in ['train','test']:
@@ -55,6 +58,7 @@ for epoch in range(EPOCH):
             unet.eval()
             now_loader = test_loader
             number=len(test_path)
+
         for image, mask in now_loader:
             image = image.to(device, dtype=torch.float)
             mask = mask.to(device, dtype=torch.float)
@@ -68,6 +72,7 @@ for epoch in range(EPOCH):
                 loss.backward()
                 optimizer.step()
             running_loss+=loss.item()*image.size(0)
+
             running_dsc+=dsc(mask,prediction)*image.size(0)
             running_iou += iou(prediction, mask) * image.size(0)
 
@@ -96,3 +101,4 @@ for epoch in range(EPOCH):
 #     running_dsc+=dsc(prediction,mask)
 # epoch_dsc=running_dsc/number
 # print('{} dsc:{}'.format('test', epoch_dsc))
+
